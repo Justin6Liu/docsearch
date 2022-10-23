@@ -36,7 +36,22 @@ class Handler implements URLHandler {
       this.files = FileHelpers.getFiles(Paths.get(directory));
     }
     public String handleRequest(URI url) throws IOException {
-      return "Don't know how to handle that path!";
+        ArrayList<File> output = new ArrayList<>();
+        if (url.getPath().equals("/")) {
+            return String.format("There are %d files to search", files.size());
+        }else if(url.getPath().contains("search")){
+            String[] parameters = url.getQuery().split("=");
+            String toLookFor = parameters[1];
+            
+            for (int i = 0; i < (files.size()); i++){
+                if (FileHelpers.readFile(files.get(i)).contains(toLookFor)){
+                    output.add(files.get(i));
+                }
+            }
+            String message = String.format("There were %d files found:", output.size());
+            return message + output.toString();
+        }
+        return "Something wrong happened if this returns";
     }
 }
 
